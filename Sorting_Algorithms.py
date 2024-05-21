@@ -1,8 +1,4 @@
-"""
-Nathan Gu and Blake Potvin
-Sorting Project - Starter
-CSE 331 Fall 2023
-"""
+
 
 import random
 import time
