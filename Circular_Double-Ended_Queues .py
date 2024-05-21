@@ -1,10 +1,3 @@
-"""
-Project 5: Deque
-CSE 331 FS23
-Authored by Gabriel Sotelo
-starter.py
-"""
-
 import gc
 from typing import TypeVar, List
 from random import randint, shuffle
