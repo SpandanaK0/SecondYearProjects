@@ -1,0 +1,284 @@
+from typing import TypeVar  # For use in type hinting
+
+# Type declarations
+T = TypeVar('T')        # generic type
+SLL = TypeVar('SLL')    # forward declared Singly Linked List type
+Node = TypeVar('Node')  # forward declared Node type
+
+
+class SLLNode:
+    """
+    Node implementation
+    Do not modify
+    """
+
+    __slots__ = ['data', 'next']
+
+    def __init__(self, data: T, next: Node = None) -> None:
+        """
+        Initialize an SLL Node
+        :param data: data value held by the node
+        :param next: reference to the next node in the SLL
+        :return: None
+        """
+        self.data = data
+        self.next = next
+
+    def __str__(self) -> str:
+        """
+        Overloads `str()` method, casts SLL nodes to strings
+        :return: string representation of node
+        """
+        return '(Node: ' + str(self.data) + ' )'
+
+    def __repr__(self) -> str:
+        """
+        Overloads `repr()` method for use in debugging
+        :return: string representation of node
+        """
+        return '(Node: ' + str(self.data) + ' )'
+
+    def __eq__(self, other: Node) -> bool:
+        """
+        Overloads `==` operator to compare nodes
+        :param other: right operand of `==`
+        :return: True if the nodes are ==, else False
+        """
+        return self is other if other is not None else False
+
+
+class SinglyLinkedList:
+    """
+    SLL implementation
+    """
+
+    __slot__ = ['head', 'tail']
+
+    def __init__(self) -> None:
+        """
+        Initializes an SLL
+        return: None
+        DO NOT MODIFY THIS FUNCTION
+        """
+        self.head = None
+        self.tail = None
+
+    def __repr__(self) -> str:
+        """
+        Represents an SLL as a string
+        DO NOT MODIFY THIS FUNCTION
+        :return: string representation of SLL
+        """
+        return self.to_string()
+
+    def __eq__(self, other: SLL) -> bool:
+        """
+        Overloads `==` operator to compare SLLs
+        :param other: right operand of `==`
+        :return: True if equal, else False
+        DO NOT MODIFY THIS FUNCTION
+        """
+        comp = lambda n1, n2: n1 == n2 and (comp(n1.next, n2.next) if (n1 and n2) else True)
+        return comp(self.head, other.head)
+
+    # ========== Modify below ========== #
+
+    def append(self, data: T) -> None:
+        """
+        Append an SLLNode to the end of the SLL
+        :param data: data to append
+        :return: None
+        """
+        new_node = SLLNode(data)
+        if not self.head:  # checking if its empty
+            self.head = new_node  # makes the head and the tail the same thing
+            self.tail = new_node
+        else:
+            self.tail.next = new_node
+            self.tail = new_node
+
+        return None
+
+    def to_string(self) -> str:
+        """
+        Converts an SLL to a string
+        :return: string representation of SLL
+        """
+        i = self.head
+        out = ""
+        if not self.head:
+            return "None"
+        while i is not None:
+            out += str(i.data)
+            if i is not self.tail:
+                out += " --> "
+            i = i.next
+        return out
+
+    def length(self) -> int:
+        """
+        Determines number of nodes in the list
+        :return: number of nodes in list
+        """
+        if not self.head:
+            return 0
+        total = 0
+        start = self.head
+
+        while start:
+            total += 1
+            start = start.next
+        return total
+
+    def total(self) -> T:
+        """
+        Sums up the values in the list
+        :return: total sum of values in the list
+        """
+        i = self.head
+        if not self.head:
+            return None
+        out = self.head.data
+        i = i.next
+        while i is not None:
+            out += i.data
+            i = i.next
+        return out
+
+    def delete(self, data: T) -> bool:
+        """
+        Deletes the first node containing `data` from the SLL
+        :param data: data to remove
+        :return: True if a node was removed, else False
+        """
+        if not self.head:
+            return False
+
+        headnode = self.head
+        while headnode.next:  # when it's not null
+            if headnode.next.data == data:  # checks if the data = to the next variable
+                headnode.next = headnode.next.next
+                if not headnode.next:
+                    self.tail = headnode
+                return True
+            headnode = headnode.next
+
+        if self.head.data == data:
+            # Special case: If the target data is in the head node
+            self.head = self.head.next
+            if not self.head:
+                # If the list becomes empty after deletion, update the tail
+                self.tail = None
+            return True
+
+        return False
+
+    def delete_all(self, data: T) -> bool:
+        """
+        Deletes all instances of a node containing `data` from the SLL
+        :param data: data to remove
+        :return: True if a node was removed, else False
+        """
+        if not self.head:
+            return False
+
+        end_val = False
+        var_node = self.head
+        while var_node.next:
+            if var_node.next.data == data:
+                var_node.next = var_node.next.next
+                if not var_node.next:
+                    self.tail = var_node
+                end_val = True
+
+            else:
+                var_node = var_node.next
+
+        if self.head.data == data:
+            # Special case: If the target data is in the head node
+            self.head = self.head.next
+            if not self.head:
+                # If the list becomes empty after deletion, update the tail
+                self.tail = None
+            end_val = True
+        return end_val
+
+    def find(self, data: T) -> bool:
+        """
+        Looks through the SLL for a node containing `data`
+        :param data: data to search for
+        :return: True if found, else False
+        """
+        if not self.head:
+            return False
+
+        flag = False
+        data_node = self.head
+        while data_node is not None:
+            # print(f"Checking node with data: {data_node.data}")
+            if data_node.data == data:
+                flag = True
+            if not data_node.next:
+                self.tail = data_node
+
+            data_node = data_node.next
+
+        return flag
+
+    def find_sum(self, data: T) -> int:
+        """
+        Returns the number of occurrences of `data` in this list
+        :param data: data to find and sum up
+        :return: number of times the data occurred
+        """
+        if not self.head:
+            return 0
+
+        count = 0
+        variable = self.head
+        while variable is not None:  # why does it not work when its variable.next
+            if variable.data == data:  # Why does variable.next.data not work here when it worked for delete function
+                count += 1
+            variable = variable.next
+        return count
+
+
+def help_mario(roster: SLL, ally: str) -> bool:
+    """
+    Updates the roster of racers to put Mario's ally at the front
+    Preserves relative order of racers around ally
+    :param roster: initial order of racers
+    :param ally: the racer that needs to go first
+    :return: True if the roster was changed, else False
+    """
+    if not roster.head:
+        return False
+
+    current = roster.head
+    previous = None
+    # go through and check if the ally is in the list and get its location
+    while current:
+        if current.data == ally:
+            break
+        else:
+            previous = current
+            current = current.next
+
+    # no ally in the list
+    if not current:
+        return False
+
+    if previous is None:
+        return False
+
+    previous.next = None
+    roster.tail.next = roster.head
+    roster.head = current
+    roster.tail = previous
+
+    return True
+
+    # roster.tail = r
+    # previous.next = location.next  # Update node 3's next to point to node 4
+    # location.next = roster.head  # Make Mario's ally the new head
+    # roster.head = location  # Update the head to point to Mario's ally
